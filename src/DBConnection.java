@@ -6,12 +6,16 @@ public class DBConnection {
     private static Connection conn;
 
     public static Connection getConnection() {
-        if (conn != null) return conn;
         try {
+            // If connection is already valid, reuse it
+            if (conn != null && !conn.isClosed()) {
+                return conn;
+            }
+
+            // Otherwise, create a new connection
             Properties props = new Properties();
             props.load(new FileInputStream("db.properties"));
 
-            // ✅ Register JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             conn = DriverManager.getConnection(
@@ -20,7 +24,7 @@ public class DBConnection {
                 props.getProperty("password")
             );
 
-            System.out.println("✅ Database connected successfully!");
+            System.out.println("Database connected successfully!");
         } catch (Exception e) {
             e.printStackTrace();
         }
