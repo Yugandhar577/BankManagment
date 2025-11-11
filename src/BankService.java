@@ -217,18 +217,60 @@ public class BankService {
         return ok;
     }
 
-    public boolean repayLoan(int accId, int loanId, double amount) {
-        double bal = accountDAO.getBalance(accId);
-        if (bal < amount) {
-            System.out.println("Insufficient balance to repay loan.");
+    public boolean repayLoan(int accId, int loanId, double paymentAmount) {
+        if (paymentAmount <= 0) {
+            System.out.println("❌ Invalid repayment amount.");
             return false;
         }
 
-        boolean ok = accountDAO.updateBalance(accId, bal - amount);
+        if (!isAccountActive(accId)) {
+            System.out.println("❌ Account not found or inactive.");
+            return false;
+        }
+
+        // Check if loan exists and get current outstanding balance
+        double outstandingBalance = loanDAO.getOutstandingBalance(loanId);
+        if (outstandingBalance < 0) {
+            System.out.println("❌ Loan not found or error retrieving loan information.");
+            return false;
+        }
+
+        if (outstandingBalance <= 0.01) {
+            System.out.println("ℹ️ This loan is already fully paid.");
+            return false;
+        }
+
+        // Ensure payment doesn't exceed outstanding balance
+        double actualPayment = Math.min(paymentAmount, outstandingBalance);
+
+        // Check account balance
+        double accountBalance = accountDAO.getBalance(accId);
+        if (accountBalance < actualPayment) {
+            System.out.println("❌ Insufficient balance to repay loan. Required: ₹" + actualPayment + ", Available: ₹" + accountBalance);
+            return false;
+        }
+
+        // Process repayment
+        double newOutstandingBalance = loanDAO.repayLoan(loanId, actualPayment);
+        if (newOutstandingBalance < 0) {
+            System.out.println("❌ Error processing loan repayment.");
+            return false;
+        }
+
+        // Deduct from account
+        boolean ok = accountDAO.updateBalance(accId, accountBalance - actualPayment);
         if (ok) {
-            loanDAO.repayLoan(loanId, amount);
-            txnDAO.addTransaction(new Transaction(accId, "LOAN_REPAY", amount, "Loan repayment"));
-            System.out.println("Loan repaid successfully!");
+            txnDAO.addTransaction(new Transaction(accId, "LOAN_REPAY", actualPayment, 
+                String.format("Loan #%d repayment (Outstanding: ₹%.2f)", loanId, newOutstandingBalance)));
+            
+            if (newOutstandingBalance <= 0.01) {
+                System.out.println("✅ Loan fully repaid! Amount paid: ₹" + actualPayment);
+            } else {
+                System.out.println("✅ Partial payment successful! Amount paid: ₹" + actualPayment + 
+                    ", Remaining balance: ₹" + String.format("%.2f", newOutstandingBalance));
+            }
+        } else {
+            System.out.println("❌ Failed to update account balance.");
         }
         return ok;
     }

@@ -26,9 +26,23 @@ CREATE TABLE accounts (
 CREATE TABLE transactions (
   txn_id INT AUTO_INCREMENT PRIMARY KEY,
   acc_id INT NOT NULL,
-  type ENUM('DEPOSIT', 'WITHDRAW', 'TRANSFER') NOT NULL,
+  type ENUM('DEPOSIT', 'WITHDRAW', 'TRANSFER', 'LOAN_REPAY') NOT NULL,
   amount DOUBLE NOT NULL CHECK (amount >= 0),
   description VARCHAR(255),
   txn_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (acc_id) REFERENCES accounts(acc_id) ON DELETE CASCADE
+);
+
+-- 💰 Loans table: tracks loan applications and repayments
+CREATE TABLE loans (
+  loan_id INT AUTO_INCREMENT PRIMARY KEY,
+  acc_id INT NOT NULL,
+  amount DOUBLE NOT NULL CHECK (amount > 0),
+  outstanding_balance DOUBLE NOT NULL CHECK (outstanding_balance >= 0),
+  interest_rate DOUBLE NOT NULL CHECK (interest_rate >= 0),
+  duration_months INT NOT NULL CHECK (duration_months > 0),
+  status ENUM('PENDING', 'APPROVED', 'CLOSED') DEFAULT 'PENDING',
+  approved_by VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (acc_id) REFERENCES accounts(acc_id) ON DELETE CASCADE
 );

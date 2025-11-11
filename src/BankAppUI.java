@@ -398,7 +398,7 @@ public class BankAppUI {
         viewTop.add(viewAcc);
         viewTop.add(loadLoans);
 
-        String[] cols = new String[] { "Loan ID", "Amount", "Rate (%)", "Months", "Status", "Approved By" };
+        String[] cols = new String[] { "Loan ID", "Amount", "Outstanding", "Rate (%)", "Months", "Status", "Approved By" };
         JTable loansTable = new JTable(new Object[][] {}, cols);
         JScrollPane loanScroll = new JScrollPane(loansTable);
 
