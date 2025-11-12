@@ -1,8 +1,8 @@
--- ✅ Create the main database
+-- Create the main database
 CREATE DATABASE IF NOT EXISTS bankdb;
 USE bankdb;
 
--- 👤 Users table: stores login and profile data
+-- Users table: stores login and profile data
 CREATE TABLE users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 🏦 Accounts table: each user can have multiple accounts
+-- Accounts table: each user can have multiple accounts
 CREATE TABLE accounts (
   acc_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE accounts (
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- 💸 Transactions table: tracks all financial movements
+-- Transactions table: tracks all financial movements
 CREATE TABLE transactions (
   txn_id INT AUTO_INCREMENT PRIMARY KEY,
   acc_id INT NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE transactions (
   FOREIGN KEY (acc_id) REFERENCES accounts(acc_id) ON DELETE CASCADE
 );
 
--- 💰 Loans table: tracks loan applications and repayments
+-- Loans table: tracks loan applications and repayments
 CREATE TABLE loans (
   loan_id INT AUTO_INCREMENT PRIMARY KEY,
   acc_id INT NOT NULL,

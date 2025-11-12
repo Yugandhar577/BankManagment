@@ -5,7 +5,7 @@ DELETE FROM transactions;
 DELETE FROM accounts;
 DELETE FROM users;
 
--- 👤 Sample Users
+-- Sample Users
 INSERT INTO users (name, email, password) VALUES
 ('Alice Johnson', 'alice@example.com', 'alice123'),
 ('Bob Smith', 'bob@example.com', 'bob123'),
@@ -14,7 +14,7 @@ INSERT INTO users (name, email, password) VALUES
 ('Ethan Clark', 'ethan@example.com', 'ethanpass'),
 ('Fiona Adams', 'fiona@example.com', 'fiona321');
 
--- 💳 Sample Accounts
+-- Sample Accounts
 INSERT INTO accounts (user_id, balance) VALUES
 (1, 12000.00),
 (2, 5600.50),
@@ -23,7 +23,7 @@ INSERT INTO accounts (user_id, balance) VALUES
 (5, 1500.00),
 (6, 670.00);
 
--- 💸 Sample Transactions
+-- Sample Transactions
 INSERT INTO transactions (acc_id, type, amount, description) VALUES
 (1, 'DEPOSIT', 12000, 'Initial deposit'),
 (2, 'DEPOSIT', 5600.50, 'Initial deposit'),
